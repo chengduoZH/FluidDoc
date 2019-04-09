@@ -83,17 +83,10 @@ In multi-card training, you can use :code:`fluid.ParallelExecutor` to run traini
 .. code-block:: python
 
     exe = fluid.Executor(...)
-    # compiled the program, and then run the model with data parallel.
-    exec_strategy = fluid.ExecutionStrategy()
-    exec_strategy.num_threads = dev_count * 4 # the size of thread pool.
-    build_strategy = fluid.BuildStrategy()
-    build_strategy.memory_optimize = True if memory_opt else False  
     
     compiled_prog = compiler.CompiledProgram(
         fluid.default_main_program()).with_data_parallel(
-            loss_name=loss.name,
-            build_strategy=build_strategy,
-            exec_strategy=exec_strategy)
+            loss_name=loss.name)
            
     result = exe.run(program=compiled_prog, 
                     fetch_list=[loss.name], 
@@ -112,6 +105,11 @@ Advanced Usage
    :maxdepth: 2
 
    test_while_training_en.rst
+
+
+- Related API :
+ - :ref:`api_fluid_Executor`
+ - :ref:`api_fluid_CompiledProgram`
 
 
 
