@@ -82,14 +82,28 @@ In multi-card training, you can use :code:`fluid.ParallelExecutor` to run traini
 
 .. code-block:: python
 
-   train_exe = fluid.ParallelExecutor(use_cuda=True, loss_name=loss.name,
-                                main_program=fluid.default_main_program())
-   train_exe.run(fetch_list=[loss.name], feed={...})
+    exe = fluid.Executor(...)
+    # compiled the program, and then run the model with data parallel.
+    exec_strategy = fluid.ExecutionStrategy()
+    exec_strategy.num_threads = dev_count * 4 # the size of thread pool.
+    build_strategy = fluid.BuildStrategy()
+    build_strategy.memory_optimize = True if memory_opt else False  
+    
+    compiled_prog = compiler.CompiledProgram(
+        fluid.default_main_program()).with_data_parallel(
+            loss_name=loss.name,
+            build_strategy=build_strategy,
+            exec_strategy=exec_strategy)
+           
+    result = exe.run(program=compiled_prog, 
+                    fetch_list=[loss.name], 
+                    feed={"image": ..., "label": ...}) 
 
 Notes:
 
-1. The constructor of :code:`ParallelExecutor` needs to be set with :code:`fluid.Program` to be run which can not be modified at runtime. The default value is :code:`fluid.default_main_program()` .
-2. :code:`ParallelExecutor` should be indicated whether to use CUDA to train. In the mode of graphic card training, all graphic cards will be occupied. Users can configure `CUDA_VISIBLE_DEVICES <http://www.acceleware.com/blog/cudavisibledevices-masking-gpus>`_ to change graphics cards that are being used.
+1. The constructor of :code:`CompiledProgram` needs to be set with :code:`fluid.Program` to be run which can not be modified at runtime. 
+2. If :code:`exe` is initialized with CUDAPlace, the model will be runed in GPU. In the mode of graphic card training, all graphic cards will be occupied. Users can configure `CUDA_VISIBLE_DEVICES <http://www.acceleware.com/blog/cudavisibledevices-masking-gpus>`_ to change graphics cards that are being used.
+2. If :code:`exe` is initialized with CPUPlace, the model will be runed in CPU. In this situation, all logic cores of CPU will be occupied. Users can configure `CPU_NUM`  to change the number of threads that are being used.
 
 Advanced Usage
 ###############
