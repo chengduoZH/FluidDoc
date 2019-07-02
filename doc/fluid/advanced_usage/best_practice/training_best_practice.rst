@@ -133,7 +133,7 @@ Paddle里面使用 :code`py_reader` 接口来实现异步数据读取，代码�
 目前Paddle中有两个执行器， :code:`Executor` 和 :code:`ParallelExecutor` ，这两个执行器的区别：
 
 执行调度器
-+++++++++++++++
+>>>>>>>>>>>>>>>
 
 ..  csv-table:: 
     :header: "执行器 ", "执行对象", "执行策略"
@@ -151,7 +151,7 @@ Paddle里面使用 :code`py_reader` 接口来实现异步数据读取，代码�
 3.2 BuildStrategy中参数配置说明
 ^^^^^^^^^^^^^^^^
 BuildStrategy配置选项
-+++++++++++++++
+>>>>>>>>>>>>>>>
 
 ..  csv-table:: 
     :header: "选项", "类型", "默认值", "说明"
@@ -175,7 +175,7 @@ BuildStrategy配置选项
 3.3 ExecutionStrategy中的配置参数
 ^^^^^^^^^^^^^^^^
 ExecutionStrategy配置选项
-+++++++++++++++
+>>>>>>>>>>>>>>>
 
 ..  csv-table:: 
     :header: "选项", "类型", "默认值", "说明"
@@ -189,13 +189,13 @@ ExecutionStrategy配置选项
 - 关于 :code:`num_threads` ，":code:`ParallelExecutor` 中根据Op之间的依赖关系确定Op的执行顺序的，即Op的输入都已经变为ready状态之后，该Op会被放到一个队列中，等待被执行。 :code:`ParallelExecutor` 内部有一个任务调度线程和一个线程池，任务调度线程从队列中取出所有Ready的Op，并将其放到线程队列中。 :code:`num_threads` 表示线程池的大小。根据以往的经验，对于CPU任务，:code:`num_threads=2*dev_count` 时性能较好，对于GPU任务，:code:`num_threads=4*dev_count` 时性能较好。**注意：线程池不是越大越好**。
 
 执行策略配置推荐
-+++++++++++++++
+>>>>>>>>>>>>>>>
 
 - 在显存足够的前提下，建议将 :code:`exec_strategy.num_iteration_per_drop_scope` 设置成一个较大的值，比如设置 :code:`exec_strategy.num_iteration_per_drop_scope=100` ，这样可以避免反复地申请和释放内存。该配置对于一些模型的优化效果较为明显。
 - 对于一些较小的模型，比如mnist、language_model等，多个线程乱序调度op的开销大于其收益，因此推荐设置 :code:`exec_strategy.num_threads=1`  。
 
 CPU训练设置
-+++++++++++++++
+>>>>>>>>>>>>>>>
 
 - 如果使用CPU做数据并行训练，需要指定环境变量CPU_NUM，这个环境变量指定程序运行过程中使用的 :code:`CPUPlace` 的个数。
 - 如果使用CPU进行数据并行训练，并且 :code:`build_strategy.reduce_strategy` =  :code:`fluid.BuildStrategy.ReduceStrategy.Reduce` ，所有 :code:`CPUPlace` 上的参数是共享的，因此对于一些使用CPU进行数据并行训练的模型，选用 :code:`Reduce` 模式可能会更快一些。
