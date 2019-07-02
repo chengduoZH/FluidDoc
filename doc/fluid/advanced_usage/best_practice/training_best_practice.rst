@@ -166,11 +166,11 @@ BuildStrategy配置选项
     ":code:`mkldnn_enabled_op_types`",           "list", "{}",    "如果是CPU训练，可以用 :code:`mkldnn_enabled_op_types` 指明模型中的那些操作可以使用MKLDNN库，如果不进行设置，模型可以使用MKLDNN库的所有操作都会使用MKLDNN库."
 
 说明：
-- 关于 :code:`reduce_strategy` ，在 :code:`ParallelExecutor` 对于数据并行支持两种参数更新模式： :code:`AllReduce` 和 :code:`Reduce` 。在 :code:`AllReduce` 模式下，各个节点上计算得到梯度之后，调用 :code:`AllReduce` 操作，梯度在各个节点上聚合，然后各个节点分别进行参数更新。在 :code:`Reduce` 模式下，参数的更新操作被均匀的分配到各个节点上，即各个节点计算得到梯度之后，将梯度在指定的节点上进行 :code:`Reduce` ，然后在该节点上，最后将更新之后的参数Broadcast到其他节点。即：如果模型中有100个参数需要更新，训练时使用的是4个节点，在 :code:`AllReduce` 模式下，各个节点需要分别对这100个参数进行更新；在 :code:`Reduce` 模式下，各个节点需要分别对这25个参数进行更新，最后对更新的参数Broadcast到其他节点上.
-- 关于 :code:`enable_backward_optimizer_op_deps` ，在多卡训练时，打开该选项可能会提升训练速度.
-- 关于 :code:`fuse_all_optimizer_ops` ，目前只支持SGD、Adam和Momentum算法。**注意：目前不支持sparse参数梯度**。
-- 关于 :code:`fuse_all_reduce_ops` ，多GPU训练时，可以对 :code:`AllReduce` 操作进行融合，以减少 :code:`AllReduce` 的调用次数。默认情况下会将同一layer中参数的梯度的 :code:`AllReduce` 操作合并成一个，比如对于 :code:`fluid.layers.fc` 中有Weight和Bias两个参数，打开该选项之后，原本需要两次 :code:`AllReduce` 操作，现在只用一次 :code:`AllReduce` 操作。此外，为支持更大粒度的参数梯度融合，Paddle提供了 :code:`FLAGS_fuse_parameter_memory_size` 选项，用户可以指定融合AllReduce操作之后，每个 :code:`AllReduce` 操作的梯度字节数，比如希望每次 :code:`AllReduce` 调用传输64MB的梯度，:code:`export FLAGS_fuse_parameter_memory_size=64` 。**注意：目前不支持sparse参数梯度**。
-- 关于 :code:`mkldnn_enabled_op_types` ，支持mkldnn库的Op有：transpose, sum, softmax, requantize, quantize, pool2d, lrn, gaussian_random, fc, dequantize, conv2d_transpose, conv2d, conv3d, concat, batch_norm, relu, tanh, sqrt, abs. 
+ - 关于 :code:`reduce_strategy` ，在 :code:`ParallelExecutor` 对于数据并行支持两种参数更新模式： :code:`AllReduce` 和 :code:`Reduce` 。在 :code:`AllReduce` 模式下，各个节点上计算得到梯度之后，调用 :code:`AllReduce` 操作，梯度在各个节点上聚合，然后各个节点分别进行参数更新。在 :code:`Reduce` 模式下，参数的更新操作被均匀的分配到各个节点上，即各个节点计算得到梯度之后，将梯度在指定的节点上进行 :code:`Reduce` ，然后在该节点上，最后将更新之后的参数Broadcast到其他节点。即：如果模型中有100个参数需要更新，训练时使用的是4个节点，在 :code:`AllReduce` 模式下，各个节点需要分别对这100个参数进行更新；在 :code:`Reduce` 模式下，各个节点需要分别对这25个参数进行更新，最后对更新的参数Broadcast到其他节点上.
+ - 关于 :code:`enable_backward_optimizer_op_deps` ，在多卡训练时，打开该选项可能会提升训练速度.
+ - 关于 :code:`fuse_all_optimizer_ops` ，目前只支持SGD、Adam和Momentum算法。**注意：目前不支持sparse参数梯度**。
+ - 关于 :code:`fuse_all_reduce_ops` ，多GPU训练时，可以对 :code:`AllReduce` 操作进行融合，以减少 :code:`AllReduce` 的调用次数。默认情况下会将同一layer中参数的梯度的 :code:`AllReduce` 操作合并成一个，比如对于 :code:`fluid.layers.fc` 中有Weight和Bias两个参数，打开该选项之后，原本需要两次 :code:`AllReduce` 操作，现在只用一次 :code:`AllReduce` 操作。此外，为支持更大粒度的参数梯度融合，Paddle提供了 :code:`FLAGS_fuse_parameter_memory_size` 选项，用户可以指定融合AllReduce操作之后，每个 :code:`AllReduce` 操作的梯度字节数，比如希望每次 :code:`AllReduce` 调用传输64MB的梯度，:code:`export FLAGS_fuse_parameter_memory_size=64` 。**注意：目前不支持sparse参数梯度**。
+ - 关于 :code:`mkldnn_enabled_op_types` ，支持mkldnn库的Op有：transpose, sum, softmax, requantize, quantize, pool2d, lrn, gaussian_random, fc, dequantize, conv2d_transpose, conv2d, conv3d, concat, batch_norm, relu, tanh, sqrt, abs. 
 
 3.3 ExecutionStrategy中的配置参数
 ^^^^^^^^^^^^^^^^
