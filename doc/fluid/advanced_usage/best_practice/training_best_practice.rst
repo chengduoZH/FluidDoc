@@ -185,8 +185,8 @@ ExecutionStrategy配置选项
     ":code:`num_threads`",                  "INT", "对于CPU：2*dev_count；对于GPU：4*dev_count. （这是一个经验值）", ":code:`ParallelExecutor` 中执行所有Op使用的线程池大小"
 
 说明：
-- 关于 :code:`num_iteration_per_drop_scope` ，框架在运行过程中会产生一些临时变量，这些变量被放在local execution scope中。通常每经过一个batch就要清理一下local execution scope中的变量，但是由于GPU是异步设备，在清理local execution scope之前需要对所有的GPU调用一次同步操作，因此耗费的时间较长。为此我们在 :code:`execution_strategy` 中添加了 :code:`num_iteration_per_drop_scope` 选项。用户可以指定经过多少次迭代之后清理一次local execution scope。
-- 关于 :code:`num_threads` ，":code:`ParallelExecutor` 中根据Op之间的依赖关系确定Op的执行顺序的，即Op的输入都已经变为ready状态之后，该Op会被放到一个队列中，等待被执行。 :code:`ParallelExecutor` 内部有一个任务调度线程和一个线程池，任务调度线程从队列中取出所有Ready的Op，并将其放到线程队列中。 :code:`num_threads` 表示线程池的大小。根据以往的经验，对于CPU任务，:code:`num_threads=2*dev_count` 时性能较好，对于GPU任务，:code:`num_threads=4*dev_count` 时性能较好。**注意：线程池不是越大越好**。
+ - 关于 :code:`num_iteration_per_drop_scope` ，框架在运行过程中会产生一些临时变量，这些变量被放在local execution scope中。通常每经过一个batch就要清理一下local execution scope中的变量，但是由于GPU是异步设备，在清理local execution scope之前需要对所有的GPU调用一次同步操作，因此耗费的时间较长。为此我们在 :code:`execution_strategy` 中添加了 :code:`num_iteration_per_drop_scope` 选项。用户可以指定经过多少次迭代之后清理一次local execution scope。
+ - 关于 :code:`num_threads` ，":code:`ParallelExecutor` 中根据Op之间的依赖关系确定Op的执行顺序的，即Op的输入都已经变为ready状态之后，该Op会被放到一个队列中，等待被执行。 :code:`ParallelExecutor` 内部有一个任务调度线程和一个线程池，任务调度线程从队列中取出所有Ready的Op，并将其放到线程队列中。 :code:`num_threads` 表示线程池的大小。根据以往的经验，对于CPU任务，:code:`num_threads=2*dev_count` 时性能较好，对于GPU任务，:code:`num_threads=4*dev_count` 时性能较好。**注意：线程池不是越大越好**。
 
 执行策略配置推荐
 >>>>>>>>>>>>>>>
